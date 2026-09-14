@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Productos</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html" class="activo">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="login.html" class="enlace-secundario">Iniciar sesión</a>
+      <a href="registro.html" class="enlace-secundario">Registrarse</a>
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <h1>Productos</h1>
+
+  <div class="filtros-productos">
+    <select id="filtro-categoria">
+      <option value="">Todas las categorías</option>
+    </select>
+    <input type="text" id="filtro-busqueda" placeholder="Buscar producto...">
+  </div>
+
+  <div id="grilla-productos" class="grilla-productos"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div><strong class="logo-texto">Mil Sabores</strong></div>
+    <p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p>
+  </div>
+</footer>
+
+<script src="js/productos-data.js"></script>
+<script src="js/carrito.js"></script>
+<script>
+  function poblarFiltroCategorias() {
+    const select = document.getElementById("filtro-categoria");
+    CATEGORIAS.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      select.appendChild(opt);
+    });
+  }
+
+  function renderizarProductos() {
+    const categoria = document.getElementById("filtro-categoria").value;
+    const busqueda = document.getElementById("filtro-busqueda").value.trim().toLowerCase();
+
+    const productos = obtenerProductos().filter(p => {
+      const coincideCategoria = !categoria || p.categoria === categoria;
+      const coincideBusqueda = !busqueda || p.nombre.toLowerCase().includes(busqueda);
+      return coincideCategoria && coincideBusqueda;
+    });
+
+    const contenedor = document.getElementById("grilla-productos");
+    if (productos.length === 0) {
+      contenedor.innerHTML = "<p>No se encontraron productos con esos filtros.</p>";
+      return;
+    }
+
+    contenedor.innerHTML = productos.map(p => `
+      <article class="tarjeta-producto">
+        <a href="producto-detalle.html?codigo=${p.codigo}">
+          <div class="imagen-producto">${p.imagen}</div>
+        </a>
+        <span class="categoria-tag">${p.categoria}</span>
+        <h3><a href="producto-detalle.html?codigo=${p.codigo}" style="color:inherit;text-decoration:none;">${p.nombre}</a></h3>
+        <p class="precio">${formatearCLP(p.precio)}</p>
+        <button class="btn btn-primario btn-pequeno" onclick="agregarRapido('${p.codigo}')">Añadir</button>
+      </article>
+    `).join("");
+  }
+
+  function agregarRapido(codigo) {
+    const resultado = agregarAlCarrito(codigo, 1);
+    alert(resultado.mensaje);
+    if (resultado.ok) renderizarProductos();
+  }
+
+  document.getElementById("filtro-categoria").addEventListener("change", renderizarProductos);
+  document.getElementById("filtro-busqueda").addEventListener("input", renderizarProductos);
+
+  poblarFiltroCategorias();
+  renderizarProductos();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Detalle de producto</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html" class="activo">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="login.html" class="enlace-secundario">Iniciar sesión</a>
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <p class="breadcrumb"><a href="index.html">Home</a> &gt; <a href="productos.html">Productos</a> &gt; <span id="breadcrumb-producto">Producto</span></p>
+
+  <div id="contenedor-detalle" class="detalle-producto"></div>
+
+  <section>
+    <h2>Productos relacionados</h2>
+    <div id="grilla-relacionados" class="grilla-productos"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p>
+  </div>
+</footer>
+
+<script src="js/productos-data.js"></script>
+<script src="js/carrito.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get("codigo");
+  const producto = obtenerProductoPorCodigo(codigo);
+  const contenedor = document.getElementById("contenedor-detalle");
+
+  if (!producto) {
+    contenedor.innerHTML = "<p>No encontramos ese producto. <a href='productos.html'>Volver al catálogo</a>.</p>";
+  } else {
+    document.title = `Pastelería Mil Sabores | ${producto.nombre}`;
+    document.getElementById("breadcrumb-producto").textContent = producto.nombre;
+
+    contenedor.innerHTML = `
+      <div class="detalle-imagen">${producto.imagen}</div>
+      <div class="detalle-info">
+        <span class="categoria-tag">${producto.categoria}</span>
+        <h1>${producto.nombre}</h1>
+        <p class="precio">${formatearCLP(producto.precio)}</p>
+        <p>${producto.descripcion}</p>
+        <p><small>Stock disponible: ${producto.stock} unidades</small></p>
+
+        <div class="selector-cantidad">
+          <label for="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" value="1" min="1" max="${producto.stock}">
+        </div>
+
+        <button class="btn btn-primario" id="btn-agregar">Añadir al carrito</button>
+        <p id="mensaje-agregado" class="error-mensaje" style="color: var(--color-exito);"></p>
+      </div>
+    `;
+
+    document.getElementById("btn-agregar").addEventListener("click", () => {
+      const cantidad = parseInt(document.getElementById("cantidad").value, 10) || 1;
+      const resultado = agregarAlCarrito(producto.codigo, cantidad);
+      const mensajeEl = document.getElementById("mensaje-agregado");
+      mensajeEl.style.color = resultado.ok ? "var(--color-exito)" : "var(--color-error)";
+      mensajeEl.textContent = resultado.mensaje;
+    });
+
+    // Productos relacionados: misma categoría, excluyendo el actual
+    const relacionados = obtenerProductos()
+      .filter(p => p.categoria === producto.categoria && p.codigo !== producto.codigo)
+      .slice(0, 4);
+
+    document.getElementById("grilla-relacionados").innerHTML = relacionados.map(p => `
+      <article class="tarjeta-producto">
+        <a href="producto-detalle.html?codigo=${p.codigo}">
+          <div class="imagen-producto">${p.imagen}</div>
+          <h3>${p.nombre}</h3>
+        </a>
+        <p class="precio">${formatearCLP(p.precio)}</p>
+      </article>
+    `).join("") || "<p>No hay productos relacionados.</p>";
+  }
+</script>
+</body>
+</html>

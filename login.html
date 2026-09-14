@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Iniciar sesión</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div style="text-align:center; margin-bottom: 10px;">
+    <span style="font-size:3rem;">🧁</span>
+    <h2 style="margin-top:0;">Pastelería Mil Sabores</h2>
+  </div>
+
+  <div class="tarjeta-formulario">
+    <h2>Inicio de sesión</h2>
+    <div id="mensaje-form" class="mensaje-formulario"></div>
+
+    <form id="form-login" novalidate>
+      <div class="campo">
+        <label for="correo">Correo</label>
+        <input type="text" id="correo" maxlength="100">
+        <span class="error-mensaje" id="correo-error"></span>
+      </div>
+
+      <div class="campo">
+        <label for="clave">Contraseña</label>
+        <input type="password" id="clave" maxlength="10">
+        <span class="error-mensaje" id="clave-error"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primario btn-bloque">Iniciar sesión</button>
+      <p style="text-align:center;margin-top:14px;">¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container"><p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p></div>
+</footer>
+
+<script src="js/carrito.js"></script>
+<script src="js/validaciones.js"></script>
+<script>
+  const form = document.getElementById("form-login");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let esValido = true;
+
+    const clave = document.getElementById("clave").value;
+    if (clave == "") {
+      mostrarError("clave", "La contraseña es obligatoria.");
+      esValido = false;
+    } else if (clave.length < 4 || clave.length > 10) {
+      mostrarError("clave", "Debe tener entre 4 y 10 caracteres.");
+      esValido = false;
+    } else {
+      limpiarError("clave");
+    }
+
+    const correo = document.getElementById("correo").value.trim();
+    if (correo == "") {
+      mostrarError("correo", "El correo es obligatorio.");
+      esValido = false;
+    } else if (correo.length > 100 || !formatoCorreoValido(correo)) {
+      mostrarError("correo", "Ingresa un correo válido.");
+      esValido = false;
+    } else if (!dominioCorreoPermitido(correo)) {
+      mostrarError("correo", "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com.");
+      esValido = false;
+    } else {
+      limpiarError("correo");
+    }
+
+    if (esValido) {
+      mostrarMensajeFormulario("mensaje-form", "Inicio de sesión simulado correctamente (EV1 no requiere autenticación real).", "exito");
+    } else {
+      mostrarMensajeFormulario("mensaje-form", "Revisa los campos marcados en rojo.", "error");
+    }
+  });
+</script>
+</body>
+</html>

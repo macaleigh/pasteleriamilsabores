@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Detalle del blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html" class="activo">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <p class="breadcrumb"><a href="blogs.html">Blogs</a> &gt; <span id="breadcrumb-blog"></span></p>
+  <div id="contenido-blog"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container"><p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p></div>
+</footer>
+
+<script src="js/carrito.js"></script>
+<script>
+  const BLOGS = {
+    "1": {
+      icono: "🏆",
+      titulo: "La torta más grande del mundo",
+      cuerpo: `En 1995, Pastelería 1000 Sabores participó en la creación de la torta más grande del mundo,
+        un proyecto que reunió a decenas de reposteros y que quedó registrado en el libro Guinness de los
+        récords. Durante semanas se planificó cada detalle: la estructura, los ingredientes en cantidades
+        industriales y la logística para transportar y exhibir la creación. Este hito no solo puso a nuestra
+        pastelería en el mapa, sino que además consolidó nuestra filosofía: no hay límite para la creatividad
+        cuando se trabaja con pasión. Hoy, cada torta que sale de nuestro obrador lleva un poco de esa misma
+        ambición y cuidado por el detalle.`
+    },
+    "2": {
+      icono: "🎉",
+      titulo: "50 años endulzando Chile",
+      cuerpo: `Durante cinco décadas, Pastelería 1000 Sabores ha acompañado cumpleaños, matrimonios y
+        celebraciones familiares en todo Chile. Nuestra receta original de manjar casero nació en una pequeña
+        cocina familiar y, con el tiempo, se transformó en el sello que hoy nos identifica. En este aniversario
+        queremos agradecer a cada cliente que confió en nosotros para hacer más dulces sus momentos especiales,
+        y reafirmar nuestro compromiso de seguir innovando sin perder la tradición que nos dio origen.`
+    }
+  };
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const blog = BLOGS[id];
+  const contenedor = document.getElementById("contenido-blog");
+
+  if (!blog) {
+    contenedor.innerHTML = "<p>No encontramos esta publicación. <a href='blogs.html'>Volver a Blogs</a>.</p>";
+  } else {
+    document.title = `Pastelería Mil Sabores | ${blog.titulo}`;
+    document.getElementById("breadcrumb-blog").textContent = blog.titulo;
+    contenedor.innerHTML = `
+      <div style="text-align:center; font-size:5rem;">${blog.icono}</div>
+      <h1>${blog.titulo}</h1>
+      <p>${blog.cuerpo}</p>
+      <a href="blogs.html" class="btn btn-secundario">Volver a Blogs</a>
+    `;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Contacto</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html" class="activo">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div style="text-align:center;">
+    <span style="font-size:3rem;">🧁</span>
+    <h2>Pastelería Mil Sabores</h2>
+  </div>
+
+  <div class="tarjeta-formulario">
+    <h2>Formulario de contacto</h2>
+    <div id="mensaje-form" class="mensaje-formulario"></div>
+
+    <form id="form-contacto" novalidate>
+      <div class="campo">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" maxlength="100">
+        <span class="error-mensaje" id="nombre-error"></span>
+      </div>
+
+      <div class="campo">
+        <label for="correo">Correo</label>
+        <input type="text" id="correo" maxlength="100" placeholder="opcional">
+        <span class="ayuda">Si lo ingresas, debe ser @duoc.cl, @profesor.duoc.cl o @gmail.com</span>
+        <span class="error-mensaje" id="correo-error"></span>
+      </div>
+
+      <div class="campo">
+        <label for="comentario">Comentario</label>
+        <textarea id="comentario" rows="5" maxlength="500"></textarea>
+        <span class="error-mensaje" id="comentario-error"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primario btn-bloque">Enviar mensaje</button>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container"><p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p></div>
+</footer>
+
+<script src="js/carrito.js"></script>
+<script src="js/validaciones.js"></script>
+<script>
+  const form = document.getElementById("form-contacto");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    var ok = true;
+
+    var comentario = document.getElementById("comentario").value.trim();
+    if (comentario == "") {
+      mostrarError("comentario", "El comentario es obligatorio.");
+      ok = false;
+    } else if (comentario.length > 500) {
+      mostrarError("comentario", "Máximo 500 caracteres.");
+      ok = false;
+    } else {
+      limpiarError("comentario");
+    }
+
+    var nombre = document.getElementById("nombre").value.trim();
+    if (nombre == "") {
+      mostrarError("nombre", "El nombre es obligatorio.");
+      ok = false;
+    } else if (nombre.length > 100) {
+      mostrarError("nombre", "Máximo 100 caracteres.");
+      ok = false;
+    } else {
+      limpiarError("nombre");
+    }
+
+    var correo = document.getElementById("correo").value.trim();
+    if (correo != "") {
+      if (correo.length > 100 || !formatoCorreoValido(correo)) {
+        mostrarError("correo", "Ingresa un correo válido.");
+        ok = false;
+      } else if (!dominioCorreoPermitido(correo)) {
+        mostrarError("correo", "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com.");
+        ok = false;
+      } else {
+        limpiarError("correo");
+      }
+    } else {
+      limpiarError("correo");
+    }
+
+    if (ok) {
+      mostrarMensajeFormulario("mensaje-form", "¡Gracias! Recibimos tu mensaje y te contactaremos pronto.", "exito");
+      form.reset();
+    } else {
+      mostrarMensajeFormulario("mensaje-form", "Revisa los campos marcados en rojo.", "error");
+    }
+  });
+</script>
+</body>
+</html>

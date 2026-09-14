@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Mi carrito</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <h1>Mi carrito de compras</h1>
+  <div id="contenido-carrito"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p>
+  </div>
+</footer>
+
+<script src="js/productos-data.js"></script>
+<script src="js/carrito.js"></script>
+<script>
+  function renderizarCarrito() {
+    const carrito = obtenerCarrito();
+    const contenedor = document.getElementById("contenido-carrito");
+
+    if (carrito.length === 0) {
+      contenedor.innerHTML = `
+        <div class="carrito-vacio">
+          <div class="icono-grande">🛒</div>
+          <p>Tu carrito está vacío.</p>
+          <a href="productos.html" class="btn btn-primario">Ver productos</a>
+        </div>`;
+      return;
+    }
+
+    const filas = carrito.map(item => `
+      <tr>
+        <td>
+          <div class="item-producto">
+            <span class="icono">${item.imagen}</span>
+            <span>${item.nombre}</span>
+          </div>
+        </td>
+        <td>${formatearCLP(item.precio)}</td>
+        <td>
+          <div class="control-cantidad">
+            <button onclick="cambiarCantidad('${item.codigo}', ${item.cantidad - 1})">−</button>
+            <span>${item.cantidad}</span>
+            <button onclick="cambiarCantidad('${item.codigo}', ${item.cantidad + 1})">+</button>
+          </div>
+        </td>
+        <td>${formatearCLP(item.precio * item.cantidad)}</td>
+        <td><button class="btn btn-peligro btn-pequeno" onclick="eliminarDelCarrito('${item.codigo}')">Eliminar</button></td>
+      </tr>
+    `).join("");
+
+    contenedor.innerHTML = `
+      <table class="tabla-carrito">
+        <thead>
+          <tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr>
+        </thead>
+        <tbody>${filas}</tbody>
+      </table>
+
+      <div class="resumen-carrito">
+        <div class="total"><span>Total:</span><span>${formatearCLP(totalCarrito())}</span></div>
+        <button class="btn btn-primario btn-bloque" onclick="pagar()">Pagar</button>
+        <button class="btn btn-secundario btn-bloque" style="margin-top:10px;" onclick="vaciarCarrito()">Vaciar carrito</button>
+      </div>
+    `;
+  }
+
+  function cambiarCantidad(codigo, nuevaCantidad) {
+    actualizarCantidad(codigo, nuevaCantidad);
+  }
+
+  function pagar() {
+    alert("Esta es una simulación de pago para la Evaluación 1. La pasarela de pago real se implementará en una etapa posterior del proyecto.");
+  }
+
+  renderizarCarrito();
+</script>
+</body>
+</html>

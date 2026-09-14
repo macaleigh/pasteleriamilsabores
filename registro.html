@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Registro de usuario</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo"><img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;"><span class="logo-texto">Mil Sabores</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="tarjeta-formulario">
+    <h2>Crear cuenta</h2>
+    <div id="mensaje-form" class="mensaje-formulario"></div>
+
+    <form id="form-registro" novalidate>
+      <div class="campo">
+        <label for="run">RUN (sin puntos ni guion)</label>
+        <input type="text" id="run" placeholder="Ej: 190110229" maxlength="9">
+        <span class="error-mensaje" id="run-error"></span>
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" maxlength="50">
+          <span class="error-mensaje" id="nombre-error"></span>
+        </div>
+        <div class="campo">
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" maxlength="100">
+          <span class="error-mensaje" id="apellidos-error"></span>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input type="text" id="correo" maxlength="100" placeholder="nombre@duoc.cl / @gmail.com">
+        <span class="ayuda">Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com</span>
+        <span class="error-mensaje" id="correo-error"></span>
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="clave">Contraseña</label>
+          <input type="password" id="clave" maxlength="10">
+          <span class="ayuda">Entre 4 y 10 caracteres</span>
+          <span class="error-mensaje" id="clave-error"></span>
+        </div>
+        <div class="campo">
+          <label for="clave2">Confirmar contraseña</label>
+          <input type="password" id="clave2" maxlength="10">
+          <span class="error-mensaje" id="clave2-error"></span>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="fechaNacimiento">Fecha de nacimiento (opcional)</label>
+        <input type="date" id="fechaNacimiento">
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="region">Región</label>
+          <select id="region"></select>
+          <span class="error-mensaje" id="region-error"></span>
+        </div>
+        <div class="campo">
+          <label for="comuna">Comuna</label>
+          <select id="comuna" disabled></select>
+          <span class="error-mensaje" id="comuna-error"></span>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="direccion">Dirección</label>
+        <input type="text" id="direccion" maxlength="300">
+        <span class="error-mensaje" id="direccion-error"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primario btn-bloque">Registrar</button>
+      <p style="text-align:center;margin-top:14px;">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container"><p class="footer-copy" style="margin:0;">© 2026 Pastelería Mil Sabores.</p></div>
+</footer>
+
+<script src="js/regiones.js"></script>
+<script src="js/carrito.js"></script>
+<script src="js/validaciones.js"></script>
+<script>
+  inicializarRegionesComunas("region", "comuna");
+
+  const form = document.getElementById("form-registro");
+
+  function validarFormularioRegistro() {
+    let esValido = true;
+
+    const apellidos = document.getElementById("apellidos").value.trim();
+    if (!apellidos) { mostrarError("apellidos", "Los apellidos son obligatorios."); esValido = false; }
+    else if (apellidos.length > 100) { mostrarError("apellidos", "Máximo 100 caracteres."); esValido = false; }
+    else limpiarError("apellidos");
+
+    const nombre = document.getElementById("nombre").value.trim();
+    if (!nombre) { mostrarError("nombre", "El nombre es obligatorio."); esValido = false; }
+    else if (nombre.length > 50) { mostrarError("nombre", "Máximo 50 caracteres."); esValido = false; }
+    else limpiarError("nombre");
+
+    const run = document.getElementById("run").value.trim();
+    if (!run) { mostrarError("run", "El RUN es obligatorio."); esValido = false; }
+    else if (!validarRun(run)) { mostrarError("run", "El RUN ingresado no es válido."); esValido = false; }
+    else limpiarError("run");
+
+    const direccion = document.getElementById("direccion").value.trim();
+    if (!direccion) { mostrarError("direccion", "La dirección es obligatoria."); esValido = false; }
+    else if (direccion.length > 300) { mostrarError("direccion", "Máximo 300 caracteres."); esValido = false; }
+    else limpiarError("direccion");
+
+    const comuna = document.getElementById("comuna").value;
+    if (!comuna) { mostrarError("comuna", "Selecciona una comuna."); esValido = false; }
+    else limpiarError("comuna");
+
+    const region = document.getElementById("region").value;
+    if (!region) { mostrarError("region", "Selecciona una región."); esValido = false; }
+    else limpiarError("region");
+
+    const clave2 = document.getElementById("clave2").value;
+    const clave = document.getElementById("clave").value;
+    if (!clave) { mostrarError("clave", "La contraseña es obligatoria."); esValido = false; }
+    else if (clave.length < 4 || clave.length > 10) { mostrarError("clave", "Debe tener entre 4 y 10 caracteres."); esValido = false; }
+    else limpiarError("clave");
+
+    if (clave2 !== clave) { mostrarError("clave2", "Las contraseñas no coinciden."); esValido = false; }
+    else limpiarError("clave2");
+
+    const correo = document.getElementById("correo").value.trim();
+    if (!correo) { mostrarError("correo", "El correo es obligatorio."); esValido = false; }
+    else if (correo.length > 100 || !formatoCorreoValido(correo)) { mostrarError("correo", "Ingresa un correo válido."); esValido = false; }
+    else if (!dominioCorreoPermitido(correo)) { mostrarError("correo", "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com."); esValido = false; }
+    else limpiarError("correo");
+
+    return esValido;
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (validarFormularioRegistro()) {
+      mostrarMensajeFormulario("mensaje-form", "¡Cuenta creada correctamente! Ya puedes iniciar sesión.", "exito");
+      form.reset();
+      document.getElementById("comuna").disabled = true;
+    } else {
+      mostrarMensajeFormulario("mensaje-form", "Revisa los campos marcados en rojo.", "error");
+    }
+  });
+</script>
+</body>
+</html>
