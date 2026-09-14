@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="titulo-pagina">Administrador | Nuevo producto</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<aside class="admin-sidebar">
+  <a href="index.html" class="logo-admin">🧁 Mil Sabores</a>
+  <nav>
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="productos.html" class="activo">🎂 Productos</a>
+    <a href="usuarios.html">👤 Usuarios</a>
+    <div class="separador"></div>
+    <a href="../index.html">↩ Volver a la tienda</a>
+  </nav>
+</aside>
+
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1 id="titulo-form">Nuevo producto</h1>
+  </div>
+
+  <div class="admin-card" style="max-width:640px;">
+    <div id="mensaje-form" class="mensaje-formulario"></div>
+
+    <form id="form-producto" novalidate>
+      <div class="campo">
+        <label for="codigo">Código de producto</label>
+        <input type="text" id="codigo" minlength="3">
+        <span class="ayuda">Obligatorio, mínimo 3 caracteres. No se puede editar tras crear el producto.</span>
+        <span class="error-mensaje" id="codigo-error"></span>
+      </div>
+
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" maxlength="100">
+        <span class="error-mensaje" id="nombre-error"></span>
+      </div>
+
+      <div class="campo">
+        <label for="descripcion">Descripción (opcional)</label>
+        <textarea id="descripcion" rows="3" maxlength="500"></textarea>
+        <span class="error-mensaje" id="descripcion-error"></span>
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="precio">Precio (CLP)</label>
+          <input type="number" id="precio" min="0" step="0.01">
+          <span class="ayuda">Mínimo 0 (se considerará producto FREE). Admite decimales.</span>
+          <span class="error-mensaje" id="precio-error"></span>
+        </div>
+        <div class="campo">
+          <label for="categoria">Categoría</label>
+          <select id="categoria"></select>
+          <span class="error-mensaje" id="categoria-error"></span>
+        </div>
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="stock">Stock</label>
+          <input type="number" id="stock" min="0" step="1">
+          <span class="ayuda">Solo números enteros.</span>
+          <span class="error-mensaje" id="stock-error"></span>
+        </div>
+        <div class="campo">
+          <label for="stockCritico">Stock crítico (opcional)</label>
+          <input type="number" id="stockCritico" min="0" step="1">
+          <span class="ayuda">Se mostrará una alerta cuando el stock sea igual o inferior a este valor.</span>
+          <span class="error-mensaje" id="stockCritico-error"></span>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="imagen">Ícono / imagen (opcional)</label>
+        <input type="text" id="imagen" maxlength="4" placeholder="Ej: 🎂">
+        <span class="ayuda">EV1 usa un emoji como marcador visual; se reemplazará por una imagen real más adelante.</span>
+      </div>
+
+      <button type="submit" class="btn btn-primario">Guardar producto</button>
+      <a href="productos.html" class="btn btn-secundario">Cancelar</a>
+    </form>
+  </div>
+</main>
+
+<script src="../js/productos-data.js"></script>
+<script src="../js/validaciones.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const codigoEdicion = params.get("codigo");
+  const esEdicion = !!codigoEdicion;
+
+  const selectCategoria = document.getElementById("categoria");
+  CATEGORIAS.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c; opt.textContent = c;
+    selectCategoria.appendChild(opt);
+  });
+
+  if (esEdicion) {
+    document.getElementById("titulo-pagina").textContent = "Administrador | Editar producto";
+    document.getElementById("titulo-form").textContent = "Editar producto";
+    const producto = obtenerProductoPorCodigo(codigoEdicion);
+    if (producto) {
+      document.getElementById("codigo").value = producto.codigo;
+      document.getElementById("codigo").disabled = true;
+      document.getElementById("nombre").value = producto.nombre;
+      document.getElementById("descripcion").value = producto.descripcion || "";
+      document.getElementById("precio").value = producto.precio;
+      document.getElementById("categoria").value = producto.categoria;
+      document.getElementById("stock").value = producto.stock;
+      document.getElementById("stockCritico").value = producto.stockCritico ?? "";
+      document.getElementById("imagen").value = producto.imagen || "";
+    }
+  }
+
+  const form = document.getElementById("form-producto");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let esValido = true;
+
+    const codigo = document.getElementById("codigo").value.trim();
+    if (!codigo) { mostrarError("codigo", "El código es obligatorio."); esValido = false; }
+    else if (codigo.length < 3) { mostrarError("codigo", "Mínimo 3 caracteres."); esValido = false; }
+    else if (!esEdicion && obtenerProductoPorCodigo(codigo)) { mostrarError("codigo", "Ya existe un producto con ese código."); esValido = false; }
+    else limpiarError("codigo");
+
+    const nombre = document.getElementById("nombre").value.trim();
+    if (!nombre) { mostrarError("nombre", "El nombre es obligatorio."); esValido = false; }
+    else if (nombre.length > 100) { mostrarError("nombre", "Máximo 100 caracteres."); esValido = false; }
+    else limpiarError("nombre");
+
+    const descripcion = document.getElementById("descripcion").value.trim();
+    if (descripcion.length > 500) { mostrarError("descripcion", "Máximo 500 caracteres."); esValido = false; }
+    else limpiarError("descripcion");
+
+    const precio = parseFloat(document.getElementById("precio").value);
+    if (document.getElementById("precio").value === "" || isNaN(precio)) { mostrarError("precio", "El precio es obligatorio."); esValido = false; }
+    else if (precio < 0) { mostrarError("precio", "El precio no puede ser negativo."); esValido = false; }
+    else limpiarError("precio");
+
+    const categoria = document.getElementById("categoria").value;
+    if (!categoria) { mostrarError("categoria", "Selecciona una categoría."); esValido = false; }
+    else limpiarError("categoria");
+
+    const stockStr = document.getElementById("stock").value;
+    const stock = parseInt(stockStr, 10);
+    if (stockStr === "" || isNaN(stock)) { mostrarError("stock", "El stock es obligatorio."); esValido = false; }
+    else if (stock < 0 || !Number.isInteger(Number(stockStr))) { mostrarError("stock", "Debe ser un número entero mayor o igual a 0."); esValido = false; }
+    else limpiarError("stock");
+
+    const stockCriticoStr = document.getElementById("stockCritico").value;
+    let stockCritico = null;
+    if (stockCriticoStr !== "") {
+      stockCritico = parseInt(stockCriticoStr, 10);
+      if (stockCritico < 0 || !Number.isInteger(Number(stockCriticoStr))) { mostrarError("stockCritico", "Debe ser un número entero mayor o igual a 0."); esValido = false; }
+      else limpiarError("stockCritico");
+    } else limpiarError("stockCritico");
+
+    if (!esValido) {
+      mostrarMensajeFormulario("mensaje-form", "Revisa los campos marcados en rojo.", "error");
+      return;
+    }
+
+    const productos = obtenerProductos();
+    const nuevoProducto = {
+      codigo, nombre, descripcion, precio, categoria, stock,
+      stockCritico: stockCritico ?? 0,
+      imagen: document.getElementById("imagen").value.trim() || "🍰"
+    };
+
+    if (esEdicion) {
+      const index = productos.findIndex(p => p.codigo === codigoEdicion);
+      productos[index] = nuevoProducto;
+    } else {
+      productos.push(nuevoProducto);
+    }
+    guardarProductos(productos);
+    mostrarMensajeFormulario("mensaje-form", "Producto guardado correctamente.", "exito");
+    setTimeout(() => window.location.href = "productos.html", 900);
+  });
+</script>
+</body>
+</html>

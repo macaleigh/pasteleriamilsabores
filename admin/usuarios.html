@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrador | Usuarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<aside class="admin-sidebar">
+  <a href="index.html" class="logo-admin">🧁 Mil Sabores</a>
+  <nav>
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="productos.html">🎂 Productos</a>
+    <a href="usuarios.html" class="activo">👤 Usuarios</a>
+    <div class="separador"></div>
+    <a href="../index.html">↩ Volver a la tienda</a>
+  </nav>
+</aside>
+
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1>Usuarios</h1>
+    <a href="usuario-form.html" class="btn btn-primario">+ Nuevo usuario</a>
+  </div>
+
+  <div class="admin-card">
+    <table class="admin-tabla">
+      <thead>
+        <tr><th>RUN</th><th>Nombre</th><th>Correo</th><th>Región / Comuna</th><th>Tipo</th><th></th></tr>
+      </thead>
+      <tbody id="tabla-usuarios"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="../js/usuarios-data.js"></script>
+<script>
+  function renderizarTabla() {
+    const usuarios = obtenerUsuarios();
+    document.getElementById("tabla-usuarios").innerHTML = usuarios.map(u => `
+      <tr>
+        <td>${u.run}</td>
+        <td>${u.nombre} ${u.apellidos}</td>
+        <td>${u.correo}</td>
+        <td>${u.comuna}, ${u.region}</td>
+        <td><span class="badge-rol">${u.tipo}</span></td>
+        <td>
+          <a class="btn btn-secundario btn-pequeno" href="usuario-form.html?run=${u.run}">Editar</a>
+          <button class="btn btn-peligro btn-pequeno" onclick="eliminarUsuario('${u.run}')">Eliminar</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function eliminarUsuario(run) {
+    if (!confirm("¿Eliminar este usuario?")) return;
+    const usuarios = obtenerUsuarios().filter(u => u.run !== run);
+    guardarUsuarios(usuarios);
+    renderizarTabla();
+  }
+
+  renderizarTabla();
+</script>
+</body>
+</html>

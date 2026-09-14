@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Panel administrativo - Pastelería Mil Sabores
+   Diseño libre según el enunciado, pero con menú lateral siempre visible.
+   ========================================================================== */
+
+:root {
+  --admin-fondo: #EAF7F1;
+  --admin-sidebar: #00694A;
+  --admin-acento: #00A86B;
+  --admin-rosa: #A8E6C9;
+  --admin-texto: #1F3D33;
+  --admin-blanco: #FFFFFF;
+  --admin-error: #C0392B;
+  --admin-exito: #2E7D32;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Lato', Arial, sans-serif;
+  background: var(--admin-fondo);
+  color: var(--admin-texto);
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 230px;
+  background: var(--admin-sidebar);
+  color: #fff5e9;
+  padding: 24px 18px;
+  flex-shrink: 0;
+}
+
+.admin-sidebar .logo-admin {
+  font-family: 'Pacifico', cursive;
+  font-size: 1.4rem;
+  margin-bottom: 30px;
+  display: block;
+  color: #fff;
+}
+
+.admin-sidebar nav a {
+  display: block;
+  color: #f4e3d7;
+  text-decoration: none;
+  padding: 11px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.admin-sidebar nav a:hover,
+.admin-sidebar nav a.activo {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+.admin-sidebar .separador { border-top: 1px solid rgba(255,255,255,0.2); margin: 18px 0; }
+
+.admin-main {
+  flex: 1;
+  padding: 30px 36px;
+}
+
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 26px;
+}
+
+.admin-topbar h1 { font-family: 'Pacifico', cursive; color: var(--admin-acento); margin: 0; }
+
+.chip-rol {
+  background: var(--admin-rosa);
+  color: var(--admin-acento);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.admin-card {
+  background: var(--admin-blanco);
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+.admin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px; margin-bottom: 26px; }
+.kpi { background: var(--admin-blanco); border-radius: 4px; padding: 20px; box-shadow: none; }
+.kpi .valor { font-size: 2rem; font-weight: 700; color: var(--admin-acento); }
+.kpi .etiqueta { color: #8d7a74; font-size: 0.85rem; }
+
+table.admin-tabla { width: 100%; border-collapse: collapse; }
+table.admin-tabla th, table.admin-tabla td { text-align: left; padding: 12px; border-bottom: 1px solid #f1e4dc; }
+table.admin-tabla th { background: var(--admin-fondo); }
+table.admin-tabla tr:hover { background: #fffaf3; }
+
+.badge-alerta { background: #fdecea; color: var(--admin-error); padding: 3px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+.badge-ok { background: #e5f4e6; color: var(--admin-exito); padding: 3px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+.badge-rol { background: #f1e4dc; color: var(--admin-acento); padding: 3px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; }
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.btn-primario { background: var(--admin-acento); color: #fff; }
+.btn-secundario { background: #fff; color: var(--admin-acento); border: 2px solid var(--admin-acento); }
+.btn-peligro { background: var(--admin-error); color: #fff; }
+.btn-pequeno { padding: 6px 12px; font-size: 0.8rem; }
+
+.campo { margin-bottom: 16px; }
+.campo label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; }
+.campo input, .campo select, .campo textarea {
+  width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e0cfc5; font-family: inherit; font-size: 1rem;
+}
+.campo .ayuda { font-size: 0.78rem; color: #8d7a74; margin-top: 4px; display: block; }
+.campo-invalido { border-color: var(--admin-error) !important; background: #fdf1f0 !important; }
+.error-mensaje { color: var(--admin-error); font-size: 0.82rem; min-height: 16px; display: block; margin-top: 4px; }
+
+.fila-doble { display: flex; gap: 16px; flex-wrap: wrap; }
+.fila-doble .campo { flex: 1 1 220px; }
+
+.mensaje-formulario { display: none; padding: 12px 16px; border-radius: 10px; margin-bottom: 18px; font-weight: 600; text-align: center; }
+.mensaje-exito { background: #e5f4e6; color: var(--admin-exito); }
+.mensaje-error { background: #fbe7e5; color: var(--admin-error); }
+
+@media (max-width: 800px) {
+  body { flex-direction: column; }
+  .admin-sidebar { width: 100%; }
+}

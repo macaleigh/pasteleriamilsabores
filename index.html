@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pastelería Mil Sabores | Inicio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav-container">
+    <a href="index.html" class="logo">
+      <img src="img/logo.png" alt="Logo Pastelería Mil Sabores" style="width:36px; height:36px;">
+      <span class="logo-texto">Mil Sabores</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="activo">Home</a></li>
+      <li><a href="productos.html">Productos</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="blogs.html">Blogs</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+    </ul>
+    <div class="nav-acciones">
+      <a href="login.html" class="enlace-secundario">Iniciar sesión</a>
+      <a href="registro.html" class="enlace-secundario">Registrarse</a>
+      <a href="carrito.html" class="carrito-link">🛒 Carrito <span class="carrito-contador">0</span></a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-texto">
+      <h1>Pastelería Mil Sabores</h1>
+      <p>Celebrando 50 años de dulzura y tradición. Descubre tortas, postres y repostería hechos con historia,
+        creatividad y mucho cariño.</p>
+      <a href="productos.html" class="btn btn-primario">Ver productos</a>
+    </div>
+    <div class="hero-imagen">
+      <img src="img/hero-banner.png" alt="Torta especial de Pastelería Mil Sabores" style="border-radius: var(--radio-borde); box-shadow: var(--sombra);">
+    </div>
+  </section>
+
+  <section>
+    <h2>Conócenos en video</h2>
+    <div class="tarjeta-formulario" style="max-width:720px;">
+      <video controls poster="img/hero-banner.png" style="width:100%; border-radius: 10px;">
+        <source src="img/video-institucional.mp4" type="video/mp4">
+        Tu navegador no soporta video HTML5.
+      </video>
+      <p style="text-align:center; margin-top:10px; font-size:0.85rem; color: var(--color-texto-secundario);">
+        Video institucional del proyecto (EV1 - DSY1104).
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Nuestros favoritos</h2>
+    <div id="grilla-destacados" class="grilla-productos"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div>
+      <strong class="logo-texto">Mil Sabores</strong>
+      <p>Repostería chilena desde hace 50 años.</p>
+    </div>
+    <div class="categorias-footer">
+      <a href="productos.html">Tortas Cuadradas</a>
+      <a href="productos.html">Tortas Circulares</a>
+      <a href="productos.html">Postres Individuales</a>
+    </div>
+    <div>
+      <p>Suscríbete a nuestras novedades:</p>
+      <form onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte!');">
+        <input type="email" placeholder="Tu correo" required style="padding:8px;border-radius:6px;border:none;">
+        <button class="btn btn-primario btn-pequeno" type="submit">Suscribir</button>
+      </form>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 Pastelería Mil Sabores. Proyecto académico DuocUC - DSY1104.</p>
+</footer>
+
+<script src="js/productos-data.js"></script>
+<script src="js/carrito.js"></script>
+<script>
+  function renderizarDestacados() {
+    const productos = obtenerProductos().slice(0, 4);
+    const contenedor = document.getElementById("grilla-destacados");
+    contenedor.innerHTML = productos.map(p => `
+      <article class="tarjeta-producto">
+        <div class="imagen-producto">${p.imagen}</div>
+        <span class="categoria-tag">${p.categoria}</span>
+        <h3>${p.nombre}</h3>
+        <p class="precio">${formatearCLP(p.precio)}</p>
+        <a href="producto-detalle.html?codigo=${p.codigo}" class="btn btn-secundario btn-pequeno">Ver producto</a>
+      </article>
+    `).join("");
+  }
+  renderizarDestacados();
+</script>
+</body>
+</html>

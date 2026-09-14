@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="titulo-pagina">Administrador | Nuevo usuario</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<aside class="admin-sidebar">
+  <a href="index.html" class="logo-admin">🧁 Mil Sabores</a>
+  <nav>
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="productos.html">🎂 Productos</a>
+    <a href="usuarios.html" class="activo">👤 Usuarios</a>
+    <div class="separador"></div>
+    <a href="../index.html">↩ Volver a la tienda</a>
+  </nav>
+</aside>
+
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1 id="titulo-form">Nuevo usuario</h1>
+  </div>
+
+  <div class="admin-card" style="max-width:640px;">
+    <div id="mensaje-form" class="mensaje-formulario"></div>
+
+    <form id="form-usuario" novalidate>
+      <div class="campo">
+        <label for="run">RUN (sin puntos ni guion)</label>
+        <input type="text" id="run" maxlength="9" placeholder="Ej: 190110229">
+        <span class="error-mensaje" id="run-error"></span>
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" maxlength="50">
+          <span class="error-mensaje" id="nombre-error"></span>
+        </div>
+        <div class="campo">
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" maxlength="100">
+          <span class="error-mensaje" id="apellidos-error"></span>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="correo">Correo</label>
+        <input type="text" id="correo" maxlength="100">
+        <span class="ayuda">Solo @duoc.cl, @profesor.duoc.cl o @gmail.com</span>
+        <span class="error-mensaje" id="correo-error"></span>
+      </div>
+
+      <div class="campo">
+        <label for="fechaNacimiento">Fecha de nacimiento (opcional)</label>
+        <input type="date" id="fechaNacimiento">
+      </div>
+
+      <div class="campo">
+        <label for="tipo">Tipo de usuario</label>
+        <select id="tipo">
+          <option value="Administrador">Administrador</option>
+          <option value="Vendedor">Vendedor</option>
+          <option value="Cliente">Cliente</option>
+        </select>
+        <span class="ayuda">Administrador: acceso total · Vendedor: solo productos y órdenes · Cliente: solo tienda.</span>
+      </div>
+
+      <div class="fila-doble">
+        <div class="campo">
+          <label for="region">Región</label>
+          <select id="region"></select>
+          <span class="error-mensaje" id="region-error"></span>
+        </div>
+        <div class="campo">
+          <label for="comuna">Comuna</label>
+          <select id="comuna" disabled></select>
+          <span class="error-mensaje" id="comuna-error"></span>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="direccion">Dirección</label>
+        <input type="text" id="direccion" maxlength="300">
+        <span class="error-mensaje" id="direccion-error"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primario">Guardar usuario</button>
+      <a href="usuarios.html" class="btn btn-secundario">Cancelar</a>
+    </form>
+  </div>
+</main>
+
+<script src="../js/usuarios-data.js"></script>
+<script src="../js/regiones.js"></script>
+<script src="../js/validaciones.js"></script>
+<script>
+  inicializarRegionesComunas("region", "comuna");
+
+  const params = new URLSearchParams(window.location.search);
+  const runEdicion = params.get("run");
+  const esEdicion = !!runEdicion;
+
+  if (esEdicion) {
+    document.getElementById("titulo-pagina").textContent = "Administrador | Editar usuario";
+    document.getElementById("titulo-form").textContent = "Editar usuario";
+    const usuario = obtenerUsuarioPorRun(runEdicion);
+    if (usuario) {
+      document.getElementById("run").value = usuario.run;
+      document.getElementById("run").disabled = true;
+      document.getElementById("nombre").value = usuario.nombre;
+      document.getElementById("apellidos").value = usuario.apellidos;
+      document.getElementById("correo").value = usuario.correo;
+      document.getElementById("fechaNacimiento").value = usuario.fechaNacimiento || "";
+      document.getElementById("tipo").value = usuario.tipo;
+      document.getElementById("region").value = usuario.region;
+      document.getElementById("region").dispatchEvent(new Event("change"));
+      setTimeout(() => { document.getElementById("comuna").value = usuario.comuna; }, 0);
+      document.getElementById("direccion").value = usuario.direccion;
+    }
+  }
+
+  const form = document.getElementById("form-usuario");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let esValido = true;
+
+    const run = document.getElementById("run").value.trim();
+    if (!run) { mostrarError("run", "El RUN es obligatorio."); esValido = false; }
+    else if (!validarRun(run)) { mostrarError("run", "El RUN ingresado no es válido."); esValido = false; }
+    else if (!esEdicion && obtenerUsuarioPorRun(run)) { mostrarError("run", "Ya existe un usuario con ese RUN."); esValido = false; }
+    else limpiarError("run");
+
+    const nombre = document.getElementById("nombre").value.trim();
+    if (!nombre) { mostrarError("nombre", "El nombre es obligatorio."); esValido = false; }
+    else if (nombre.length > 50) { mostrarError("nombre", "Máximo 50 caracteres."); esValido = false; }
+    else limpiarError("nombre");
+
+    const apellidos = document.getElementById("apellidos").value.trim();
+    if (!apellidos) { mostrarError("apellidos", "Los apellidos son obligatorios."); esValido = false; }
+    else if (apellidos.length > 100) { mostrarError("apellidos", "Máximo 100 caracteres."); esValido = false; }
+    else limpiarError("apellidos");
+
+    const correo = document.getElementById("correo").value.trim();
+    if (!correo) { mostrarError("correo", "El correo es obligatorio."); esValido = false; }
+    else if (correo.length > 100 || !formatoCorreoValido(correo)) { mostrarError("correo", "Ingresa un correo válido."); esValido = false; }
+    else if (!dominioCorreoPermitido(correo)) { mostrarError("correo", "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com."); esValido = false; }
+    else limpiarError("correo");
+
+    const region = document.getElementById("region").value;
+    if (!region) { mostrarError("region", "Selecciona una región."); esValido = false; }
+    else limpiarError("region");
+
+    const comuna = document.getElementById("comuna").value;
+    if (!comuna) { mostrarError("comuna", "Selecciona una comuna."); esValido = false; }
+    else limpiarError("comuna");
+
+    const direccion = document.getElementById("direccion").value.trim();
+    if (!direccion) { mostrarError("direccion", "La dirección es obligatoria."); esValido = false; }
+    else if (direccion.length > 300) { mostrarError("direccion", "Máximo 300 caracteres."); esValido = false; }
+    else limpiarError("direccion");
+
+    if (!esValido) {
+      mostrarMensajeFormulario("mensaje-form", "Revisa los campos marcados en rojo.", "error");
+      return;
+    }
+
+    const usuarios = obtenerUsuarios();
+    const nuevoUsuario = {
+      run, nombre, apellidos, correo,
+      fechaNacimiento: document.getElementById("fechaNacimiento").value,
+      tipo: document.getElementById("tipo").value,
+      region, comuna, direccion
+    };
+
+    if (esEdicion) {
+      const index = usuarios.findIndex(u => u.run === runEdicion);
+      usuarios[index] = nuevoUsuario;
+    } else {
+      usuarios.push(nuevoUsuario);
+    }
+    guardarUsuarios(usuarios);
+    mostrarMensajeFormulario("mensaje-form", "Usuario guardado correctamente.", "exito");
+    setTimeout(() => window.location.href = "usuarios.html", 900);
+  });
+</script>
+</body>
+</html>

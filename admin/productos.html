@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrador | Productos</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<aside class="admin-sidebar">
+  <a href="index.html" class="logo-admin">🧁 Mil Sabores</a>
+  <nav>
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="productos.html" class="activo">🎂 Productos</a>
+    <a href="usuarios.html">👤 Usuarios</a>
+    <div class="separador"></div>
+    <a href="../index.html">↩ Volver a la tienda</a>
+  </nav>
+</aside>
+
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1>Productos</h1>
+    <a href="producto-form.html" class="btn btn-primario">+ Nuevo producto</a>
+  </div>
+
+  <div class="admin-card">
+    <table class="admin-tabla">
+      <thead>
+        <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody id="tabla-productos"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="../js/productos-data.js"></script>
+<script>
+  function renderizarTabla() {
+    const productos = obtenerProductos();
+    document.getElementById("tabla-productos").innerHTML = productos.map(p => `
+      <tr>
+        <td>${p.codigo}</td>
+        <td>${p.nombre}</td>
+        <td>${p.categoria}</td>
+        <td>$${p.precio.toLocaleString("es-CL")}</td>
+        <td>${p.stock}</td>
+        <td>${p.stock <= p.stockCritico ? '<span class="badge-alerta">Stock bajo</span>' : '<span class="badge-ok">OK</span>'}</td>
+        <td>
+          <a class="btn btn-secundario btn-pequeno" href="producto-form.html?codigo=${p.codigo}">Editar</a>
+          <button class="btn btn-peligro btn-pequeno" onclick="eliminarProducto('${p.codigo}')">Eliminar</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function eliminarProducto(codigo) {
+    if (!confirm("¿Eliminar este producto?")) return;
+    const productos = obtenerProductos().filter(p => p.codigo !== codigo);
+    guardarProductos(productos);
+    renderizarTabla();
+  }
+
+  renderizarTabla();
+</script>
+</body>
+</html>
